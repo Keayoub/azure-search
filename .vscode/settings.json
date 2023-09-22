@@ -19,7 +19,7 @@
         "**/node_modules": true,
         "static": true
     },
-    "azureFunctions.deploySubpath": "app\\functionapp",
+    "azureFunctions.deploySubpath": "app\\api",
     "azureFunctions.scmDoBuildDuringDeployment": true,
     "azureFunctions.projectLanguage": "Python",
     "azureFunctions.projectRuntime": "~4",

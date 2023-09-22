@@ -371,3 +371,4 @@ output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output BACKEND_URI string = backend.outputs.uri
+output AZURE_FUNCTIONAPP_API string = api.outputs.name
