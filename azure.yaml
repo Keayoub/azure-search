@@ -22,6 +22,11 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: true
           continueOnError: false
+  api:
+    project: ./app/functionapp
+    language: python
+    host: function
+  
 hooks:
     postprovision:
       windows:

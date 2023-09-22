@@ -11,6 +11,7 @@ param location string
 
 param appServicePlanName string = ''
 param backendServiceName string = ''
+param functionAppName string = ''
 param resourceGroupName string = ''
 
 param searchServiceName string = ''
@@ -28,7 +29,7 @@ param storageContainerName string = 'content'
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['eastus', 'southcentralus', 'westeurope'])
+@allowed([ 'eastus', 'southcentralus', 'westeurope' ])
 @metadata({
   azd: {
     type: 'location'
@@ -82,49 +83,6 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
-}
-
-// Create an App Service Plan to group applications under the same payment plan and SKU
-module appServicePlan 'core/host/appserviceplan.bicep' = {
-  name: 'appserviceplan'
-  scope: resourceGroup
-  params: {
-    name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
-    location: location
-    tags: tags
-    sku: {
-      name: 'B1'
-      capacity: 1
-    }
-    kind: 'linux'
-  }
-}
-
-// The application frontend
-module backend 'core/host/appservice.bicep' = {
-  name: 'web'
-  scope: resourceGroup
-  params: {
-    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
-    location: location
-    tags: union(tags, { 'azd-service-name': 'backend' })
-    appServicePlanId: appServicePlan.outputs.id
-    runtimeName: 'python'
-    runtimeVersion: '3.10'
-    appCommandLine: 'python3 -m gunicorn "app:create_app()"'
-    scmDoBuildDuringDeployment: true
-    managedIdentity: true
-    appSettings: {
-      AZURE_STORAGE_ACCOUNT: storage.outputs.name
-      AZURE_STORAGE_CONTAINER: storageContainerName
-      AZURE_OPENAI_SERVICE: openAi.outputs.name
-      AZURE_SEARCH_INDEX: searchIndexName
-      AZURE_SEARCH_SERVICE: searchService.outputs.name
-      AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
-    }
-  }
 }
 
 module openAi 'core/ai/cognitiveservices.bicep' = {
@@ -229,6 +187,63 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
+  }
+}
+
+// Create an App Service Plan to group applications under the same payment plan and SKU
+module appServicePlan 'core/host/appserviceplan.bicep' = {
+  name: 'appserviceplan'
+  scope: resourceGroup
+  params: {
+    name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
+    location: location
+    tags: tags
+    sku: {
+      name: 'P2V3'
+      capacity: 1
+    }
+    kind: 'linux'
+  }
+}
+
+// The application frontend
+module backend 'core/host/appservice.bicep' = {
+  name: 'web'
+  scope: resourceGroup
+  params: {
+    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
+    location: location
+    tags: union(tags, { 'azd-service-name': 'backend' })
+    appServicePlanId: appServicePlan.outputs.id
+    runtimeName: 'python'
+    runtimeVersion: '3.10'
+    appCommandLine: 'python3 -m gunicorn "app:create_app()"'
+    scmDoBuildDuringDeployment: true
+    managedIdentity: true
+    appSettings: {
+      AZURE_STORAGE_ACCOUNT: storage.outputs.name
+      AZURE_STORAGE_CONTAINER: storageContainerName
+      AZURE_OPENAI_SERVICE: openAi.outputs.name
+      AZURE_SEARCH_INDEX: searchIndexName
+      AZURE_SEARCH_SERVICE: searchService.outputs.name
+      AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+    }
+  }
+}
+
+// the function app api
+module api 'core/host/functionapp.bicep' = {
+  name: 'api'
+  scope: resourceGroup
+  params: {
+    appName: !empty(functionAppName) ? functionAppName : '${abbrs.webSitesFunctions}api-${resourceToken}'
+    tags: union(tags, { 'azd-service-name': 'api' })
+    appServicePlanId: appServicePlan.outputs.id
+    location: location
+    appInsightsLocation:location    
+    storageAccountName: storage.outputs.name    
   }
 }
 

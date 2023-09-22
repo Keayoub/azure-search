@@ -1,13 +1,5 @@
-@description('The name of the Azure Function app.')
-param functionAppName string = 'func-${uniqueString(resourceGroup().id)}'
-
-@description('Storage Account type')
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_RAGRS'
-])
-param storageAccountType string = 'Standard_LRS'
+@description('The name of the function app that you wish to create.')
+param appName string = 'fnapp${uniqueString(resourceGroup().id)}'
 
 @description('Location for all resources.')
 param location string = resourceGroup().location
@@ -15,74 +7,40 @@ param location string = resourceGroup().location
 @description('Location for Application Insights')
 param appInsightsLocation string = resourceGroup().location
 
+@description('The name of the storage account that you wish to create.')
+param storageAccountName string
+
 @description('The language worker runtime to load in the function app.')
 @allowed([
-  'dotnet'
   'node'
   'python'
+  'dotnet'
   'java'
 ])
-param functionWorkerRuntime string = 'node'
+param runtime string = 'python'
+param appServicePlanId string
+param tags object = {}
 
-@description('Required for Linux app to represent runtime stack in the format of \'runtime|runtimeVersion\'. For example: \'python|3.9\'')
-param linuxFxVersion string
+var functionAppName = appName
+var applicationInsightsName = appName
+var functionWorkerRuntime = runtime
 
-@description('The zip content url.')
-param packageUri string
-
-var hostingPlanName = functionAppName
-var applicationInsightsName = functionAppName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: storageAccountType
-  }
-  kind: 'Storage'
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' existing = {
+  name: storageAccountName    
 }
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: hostingPlanName
-  location: location
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-    size: 'Y1'
-    family: 'Y'
-  }
-  properties: {
-    reserved: true
-  }
-}
-
-resource applicationInsight 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
-  location: appInsightsLocation
-  tags: {
-    'hidden-link:${resourceId('Microsoft.Web/sites', functionAppName)}': 'Resource'
-  }
-  properties: {
-    Application_Type: 'web'
-  }
-  kind: 'web'
-}
-
-resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
+resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   name: functionAppName
   location: location
-  kind: 'functionapp,linux'
+  kind: 'functionapp'
+  tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
-    reserved: true
-    serverFarmId: hostingPlan.id
+    serverFarmId: appServicePlanId  
     siteConfig: {
-      linuxFxVersion: linuxFxVersion
       appSettings: [
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference(resourceId('Microsoft.Insights/components', functionAppName), '2020-02-02').InstrumentationKey
-        }
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
@@ -96,21 +54,37 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           value: toLower(functionAppName)
         }
         {
+          name: 'ENABLE_ORYX_BUILD' // required for remote build on Linux specifically, see https://docs.microsoft.com/en-us/azure/azure-functions/functions-deployment-technologies#remote-build-on-linux
+          value: 'true'
+        }
+        {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~4'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: applicationInsights.properties.InstrumentationKey
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
         }
-        {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: packageUri
-        }
       ]
+      ftpsState: 'FtpsOnly'
+      minTlsVersion: '1.2'
+      alwaysOn: true
+      pythonVersion:'3.11'
     }
+    httpsOnly: true
   }
-  dependsOn: [
-    applicationInsight
-  ]
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: applicationInsightsName
+  location: appInsightsLocation
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    Request_Source: 'rest'
+  }
 }
