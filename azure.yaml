@@ -30,15 +30,25 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run:  cd ../api;pip install -r requirements.txt;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          run:  cd ../api;pip install -r requirements.txt
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../api;pip install -r requirements.txt;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          run:  cd ../api;pip install -r requirements.txt
           interactive: true
           continueOnError: false
-      
+      postdeploy:
+        windows:
+          shell: pwsh
+          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          interactive: true
+          continueOnError: false
+        posix:
+          shell: sh
+          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          interactive: true
+          continueOnError: false
 hooks:
     postprovision:
       windows:
