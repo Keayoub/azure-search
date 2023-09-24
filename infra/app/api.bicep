@@ -19,7 +19,11 @@ module api '../core/host/functions.bicep' = {
     tags: union(tags, { 'azd-service-name': serviceName })
     allowedOrigins: allowedOrigins
     alwaysOn: true
-    appSettings: appSettings
+    appSettings: union(appSettings, {
+        WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+        WEBSITE_CONTENTSHARE: name
+        APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsights.properties.InstrumentationKey
+      })
     applicationInsightsName: applicationInsightsName
     appServicePlanId: appServicePlanId
     keyVaultName: keyVaultName
@@ -28,6 +32,14 @@ module api '../core/host/functions.bicep' = {
     storageAccountName: storageAccountName
     scmDoBuildDuringDeployment: false
   }
+}
+
+resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+  name: storageAccountName
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: applicationInsightsName
 }
 
 output SERVICE_API_IDENTITY_PRINCIPAL_ID string = api.outputs.identityPrincipalId

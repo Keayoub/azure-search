@@ -234,12 +234,12 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
 
 // The application frontend/backend
 module backend 'app/web.bicep' = {
-   name: 'backend'
+  name: 'backend'
   scope: resourceGroup
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
-    tags: tags  
+    tags: tags
     appServicePlanId: appServicePlan.outputs.id
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
@@ -260,19 +260,17 @@ module api 'app/api.bicep' = {
   scope: resourceGroup
   params: {
     name: !empty(functionAppName) ? functionAppName : '${abbrs.webSitesFunctions}api-${resourceToken}'
-    tags:tags    
+    tags: tags
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     appServicePlanId: appServicePlan.outputs.id
     location: location
-    keyVaultName:keyVault.outputs.name
-    storageAccountName: storage.outputs.name    
-    allowedOrigins: [ backend.outputs.SERVICE_WEB_URI ]
-    appSettings:{
-      WEBSITE_CONTENTSHARE:functionAppName
-      ENABLE_ORYX_BUILD: true
-    }
+    keyVaultName: keyVault.outputs.name
+    storageAccountName: storage.outputs.name
+    allowedOrigins: [ backend.outputs.SERVICE_WEB_URI ]    
   }
 }
+
+// USER ROLES
 
 // Give the API access to KeyVault
 module apiKeyVaultAccess './core/security/keyvault-access.bicep' = {
@@ -284,7 +282,6 @@ module apiKeyVaultAccess './core/security/keyvault-access.bicep' = {
   }
 }
 
-// USER ROLES
 module openAiRoleUser 'core/security/role.bicep' = {
   scope: openAiResourceGroup
   name: 'openai-role-user'
