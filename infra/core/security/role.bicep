@@ -16,5 +16,6 @@ resource role 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalId: principalId
     principalType: principalType
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
+    
   }
 }

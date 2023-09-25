@@ -288,7 +288,7 @@ module apiKeyVaultAccess './core/security/keyvault-access.bicep' = {
   name: 'api-keyvault-access'  
   params: {
     keyVaultName: keyVault.outputs.name
-    principalId: api.outputs.SERVICE_PRINCIPAL_ID
+    principalId: api.outputs.SERVICE_PRINCIPAL_ID    
   }
 }
 
@@ -299,7 +299,7 @@ module openAiRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -310,7 +310,7 @@ module formRecognizerRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -321,7 +321,18 @@ module storageRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Storage Blob Data Owner
+module storageDataOwner 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-data-owner'
+  params: {
+    principalId: api.outputs.SERVICE_PRINCIPAL_ID
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -331,7 +342,7 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -342,7 +353,7 @@ module searchRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -352,7 +363,7 @@ module searchContribRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -362,27 +373,6 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    principalType: 'User'
-  }
-}
-
-// SYSTEM IDENTITIES OPEN AI FOR API
-module openAiRoleAPI 'core/security/role.bicep' = {
-  scope: openAiResourceGroup
-  name: 'openai-role-api'
-  params: {
-    principalId: api.outputs.SERVICE_PRINCIPAL_ID
-    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-    principalType: 'ServicePrincipal'
-  }
-}
-
-module storageRoleAPI 'core/security/role.bicep' = {
-  scope: storageResourceGroup
-  name: 'storage-role-api'
-  params: {
-    principalId: api.outputs.SERVICE_PRINCIPAL_ID
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
     principalType: 'ServicePrincipal'
   }
 }
@@ -393,6 +383,17 @@ module searchRoleAPI 'core/security/role.bicep' = {
   params: {
     principalId: api.outputs.SERVICE_PRINCIPAL_ID
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// SYSTEM IDENTITIES OPEN AI FOR API
+module openAiRoleAPI 'core/security/role.bicep' = {
+  scope: openAiResourceGroup
+  name: 'openai-role-api'
+  params: {
+    principalId: api.outputs.SERVICE_PRINCIPAL_ID
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
     principalType: 'ServicePrincipal'
   }
 }
