@@ -209,12 +209,12 @@ def filename_to_id(filename):
 
 def create_sections(filename, page_map, use_vectors):
     file_id = filename_to_id(filename)
-    for i, (content, pagenum) in enumerate(split_text(page_map)):
+    for i, (content, page_num) in enumerate(split_text(page_map)):
         section = {
             "id": f"{file_id}-page-{i}",
             "content": content,
             "category": args.category,
-            "sourcepage": blob_name_from_file_page(filename, pagenum),
+            "sourcepage": blob_name_from_file_page(filename, page_num),
             "sourcefile": filename
         }
         if use_vectors:

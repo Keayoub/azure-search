@@ -1,22 +1,20 @@
-import datetime
 import os
 import azure.functions as func
 import logging
+from function_prepdocs import fc
+from function_blobs import fb
 
-app = func.FunctionApp()
+bp = func.Blueprint()
 
-@app.schedule(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=False,
+@bp.schedule(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=False,
               use_monitor=False) 
 def timer_trigger(myTimer: func.TimerRequest) -> None:
     if myTimer.past_due:
         logging.info('The timer is past due!')
 
-    from function_blobs import fb
-    from function_prepdocs import fc
-    
     utc_timestamp = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
 
-    if myTimer.past_due:
+    if mytimer.past_due:
         logging.info('The timer is past due!')
            
     use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER", "false").lower() == "true"
@@ -36,7 +34,7 @@ def timer_trigger(myTimer: func.TimerRequest) -> None:
       
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
 
-@app.route(route="delete_blob", auth_level=func.AuthLevel.FUNCTION)
+@bp.route(route="delete_blob", auth_level=func.AuthLevel.FUNCTION)
 def delete_blob(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
@@ -49,7 +47,6 @@ def delete_blob(req: func.HttpRequest) -> func.HttpResponse:
         else:
             blobname = req_body.get('blobname')
 
-    from function_blobs import fb    
     if blobname:
         fb.remove_blobs(blobname)
         return func.HttpResponse(f"Hello, {blobname}. This HTTP triggered function executed successfully.")
@@ -59,16 +56,13 @@ def delete_blob(req: func.HttpRequest) -> func.HttpResponse:
              status_code=200
         )
     
-@app.route(route="delete_all", auth_level=func.AuthLevel.FUNCTION)
+@bp.route(route="delete_all", auth_level=func.AuthLevel.FUNCTION)
 def delete_all(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    from function_blobs import fb    
     fb.remove_blobs(None)
     
     return func.HttpResponse(
              "This HTTP triggered function executed successfully. All blobs removed.",
              status_code=200
         )
-
-
