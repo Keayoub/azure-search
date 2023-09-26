@@ -38,3 +38,15 @@ typing_extensions       4.8.0
 urllib3                 2.0.5
 wheel                   0.41.2
 yarl                    1.9.2
+
+
+Result: Failure Exception: ModuleNotFoundError: 
+No module named 'azure.identity' Stack: File "/azure-functions-host/workers/python/3.11/LINUX/X64/azure_functions_worker/dispatcher.py", line 479, 
+in _handle__invocation_request call_result = await self._loop.run_in_executor( ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File 
+"/usr/local/lib/python3.11/concurrent/futures/thread.py", line 58, 
+in run result = self.fn(*self.args, **self.kwargs) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+File "/azure-functions-host/workers/python/3.11/LINUX/X64/azure_functions_worker/dispatcher.py", 
+line 752, in _run_sync_func return ExtensionManager.get_sync_invocation_wrapper(context, ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+File "/azure-functions-host/workers/python/3.11/LINUX/X64/azure_functions_worker/extension.py", 
+line 215, in _raw_invocation_wrapper result = function(**args) ^^^^^^^^^^^^^^^^ 
+File "/home/site/wwwroot/function_app.py", line 14, in prepare_docs from function_blobs import fb File "/home/site/wwwroot/function_blobs.py", line 7, in <module> from azure.identity import DefaultAzureCredential

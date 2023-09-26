@@ -41,12 +41,12 @@ services:
       postdeploy:
         windows:
           shell: pwsh
-          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
+          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
           interactive: true
           continueOnError: false
 hooks:

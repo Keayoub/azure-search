@@ -3,6 +3,10 @@ import os
 import azure.functions as func
 import logging
 
+from function_blobs import BlobManager
+from function_prepdocs import OpenAIManager
+    
+
 app = func.FunctionApp()
 
 @app.schedule(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=False,
@@ -11,8 +15,8 @@ def prepare_docs(myTimer: func.TimerRequest) -> None:
     if myTimer.past_due:
         logging.info('The timer is past due!')
 
-    from function_blobs import fb
-    from function_prepdocs import fc
+    fb = BlobManager()
+    fc = OpenAIManager()
     
     utc_timestamp = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
 
