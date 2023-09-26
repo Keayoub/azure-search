@@ -54,7 +54,11 @@ def chunck_blob(myblob: func.InputStream):
         fullpdfcontent = myblob.read()
         fc.split_upload_blobs(blob_name, fullpdfcontent)
         # run index on all blobs in container
-        use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER").lower() == "true"
+        # check if the environment variable is set to use local pdf parser
+        if os.getenv("USE_LOCAL_PDF_PARSER") is None:
+            use_local_pdf_parser = False
+        else:
+            use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER").lower() == "true"
         # List blobs in the container
         blob_list = fc.blob_service.get_container_client(fc.container_name).list_blobs(name_starts_with=os.path.splitext(blob_name)[0])
         if not blob_list:
