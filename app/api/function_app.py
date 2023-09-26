@@ -89,37 +89,5 @@ def chunck_blob(myblob: func.InputStream):
         # Delete the source blob after copying
         source_blob_client.delete_blob()                
     except Exception as e:
-        logging.error(f"Exception: {e}")        
-                  
-    
-@app.schedule(schedule="0 */30 * * * *", arg_name="myTimer", 
-            run_on_startup=False, use_monitor=False)
-def prepare_docs(myTimer: func.TimerRequest):
-    if myTimer.past_due:
-        logging.info("The timer is past due!")
-
-    fc = PrepDocsManager()
-
-    use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER", "false").lower() == "true"
-
-    # List blobs in the container
-    blob_list = fc.blob_service.get_container_client(fc.container_name).list_blobs()
-    if not blob_list:
-        logging.info(f"No blobs found in container '{fc.container_name}'")
-        return
-
-    logging.info(f"Start Processing files in container {fc.container_name}...")
-    
-    # First run create search index
-    fc.create_search_index(os.getenv("AZURE_SEARCH_INDEX", "local-index"))
-
-    for blob in blob_list:
-        # Send blob to Form Recognizer for data extraction
-        page_map = fc.get_document_text(blob.name, use_local_pdf_parser)
-        # Split PDF into sections
-        sections = fc.create_sections(blob.name, page_map, True)
-        # Upload sections to blob container
-        fc.index_sections(os.path.basename(blob.name), sections)
-
-        logging.info(f"Finished Processing files in container {fc.container_name}...")
+        logging.error(f"Exception: {e}")                          
 
