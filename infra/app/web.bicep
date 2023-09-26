@@ -14,7 +14,7 @@ module web '../core/host/appservice.bicep' = {
     tags: union(tags, { 'azd-service-name': serviceName })
     appServicePlanId: appServicePlanId
     runtimeName: 'python'
-    runtimeVersion: '3.10'
+    runtimeVersion: '3.11'
     appCommandLine: 'python3 -m gunicorn "app:create_app()"'
     scmDoBuildDuringDeployment: true
     managedIdentity: true

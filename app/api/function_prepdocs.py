@@ -253,7 +253,7 @@ class PrepDocsManager:
     def remove_from_index(self, filename):
         logging.info(f"Removing sections from '{filename or '<all>'}' from search index '{self.search_index}'")
         search_service = os.getenv("AZURE_SEARCH_SERVICE")
-        search_creds = self.csredential
+        search_creds = self.credential
         search_client = SearchClient(endpoint=f"https://{search_service}.search.windows.net/", index_name=self.search_index, credential=search_creds)
         while True:
             filter = None if filename is None else f"sourcefile eq '{os.path.basename(filename)}'"
