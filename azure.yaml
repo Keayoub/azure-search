@@ -14,50 +14,50 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run:  cd ../frontend;npm install;npm run build
+          run: cd ../frontend;npm install;npm run build
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../frontend;npm install;npm run build
+          run: cd ../frontend;npm install;npm run build
           interactive: true
           continueOnError: false
   api:
-    project: ./app/api  
+    project: ./app/api
     language: py
     host: function
     hooks:
       prepackage:
         windows:
           shell: pwsh
-          run:  cd ../api;pip install -r requirements.txt
+          run: pip install -r requirements.txt;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../api;pip install -r requirements.txt
+          run: pip install -r requirements.txt;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build local
           interactive: true
           continueOnError: false
       postdeploy:
         windows:
           shell: pwsh
-          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
+          run: func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../api;func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
+          run: func azure functionapp publish ${AZURE_FUNCTIONAPP_API} --build remote
           interactive: true
           continueOnError: false
-hooks:
-    postprovision:
-      windows:
-        shell: pwsh
-        run: ./scripts/prepdocs.ps1
-        interactive: true
-        continueOnError: false
-      posix:
-        shell: sh
-        run: ./scripts/prepdocs.sh
-        interactive: true
-        continueOnError: false
+# hooks:
+#   postprovision:
+#     windows:
+#       shell: pwsh
+#       run: ./scripts/prepdocs.ps1
+#       interactive: true
+#       continueOnError: false
+#     posix:
+#       shell: sh
+#       run: ./scripts/prepdocs.sh
+#       interactive: true
+#       continueOnError: false

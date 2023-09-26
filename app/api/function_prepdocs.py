@@ -146,7 +146,6 @@ class PrepDocsManager:
 
         openaideployment = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
         return openai.Embedding.create(engine=openaideployment, input=text)["data"][0]["embedding"]
-
     
     def split_text(self, filename, page_map):
         SENTENCE_ENDINGS = [".", "!", "?"]
@@ -293,6 +292,7 @@ class PrepDocsManager:
             else:
                 prefix = os.path.splitext(os.path.basename(filename))[0]
                 blobs = filter(lambda b: re.match(f"{prefix}-\d+\.pdf", b), self.blob_container.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0]))
+            
             for b in blobs:
                 logging.info(f"\tRemoving blob {b}")
                 self.blob_container.delete_blob(b)
