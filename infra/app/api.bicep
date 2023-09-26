@@ -23,7 +23,6 @@ module api '../core/host/functions.bicep' = {
         WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
         WEBSITE_CONTENTSHARE: name
         CONTENT_INDEX_CATEGORY: 'FunctionApp'
-        PYTHON_ISOLATE_WORKER_DEPENDENCIES: 1
       })
     applicationInsightsName: applicationInsightsName
     appServicePlanId: appServicePlanId
