@@ -15,7 +15,7 @@ module web '../core/host/appservice.bicep' = {
     appServicePlanId: appServicePlanId
     runtimeName: 'python'
     runtimeVersion: '3.11'
-    appCommandLine: 'python3 -m gunicorn "app:create_app()"'
+    appCommandLine: 'python3 -m gunicorn main:app"'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     appSettings: appSettings
@@ -23,5 +23,5 @@ module web '../core/host/appservice.bicep' = {
 }
 
 output SERVICE_WEB_NAME string = web.outputs.name
-output SERVICE_WEB_URI string = web.outputs.uri
-output SERVICE_PRINCIPAL_ID string = web.outputs.identityPrincipalId
+output uri string = web.outputs.uri
+output identityPrincipalId string = web.outputs.identityPrincipalId
