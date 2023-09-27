@@ -9,17 +9,11 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "Quel fut le montant du bénéfice net d'Hydro-Québec ? ",
-        value: "Quel fut le montant du bénéfice net d'Hydro-Québec ? "
+        text: "What is included in my Northwind Health Plus plan that is not in standard?",
+        value: "What is included in my Northwind Health Plus plan that is not in standard?"
     },
-    {
-        text: "Quel est le volume des ventes d'électricité à l'exportation ?",
-        value: "Quel est le volume des ventes d'électricité à l'exportation ? "
-    },
-    {
-        text: "Quel est le volume des ventes d'électricité à l'exportation ? ",
-        value: "Quel est le volume des ventes d'électricité à l'exportation ? "
-    }
+    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
+    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
 ];
 
 interface Props {

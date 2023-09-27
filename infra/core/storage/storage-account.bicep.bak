@@ -39,7 +39,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
       defaultAction: 'Allow'
     }
     publicNetworkAccess: publicNetworkAccess
-    supportsHttpsTrafficOnly: requireHttpsConnection
   }
 
   resource blobServices 'blobServices' = if (!empty(containers)) {
