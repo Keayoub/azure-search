@@ -30,12 +30,12 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run: pip3 install -r requirements.txt
+          run: pip install -r requirements.txt
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run: pip3 install -r requirements.txt
+          run: pip install -r requirements.txt
           interactive: true
           continueOnError: false
       postdeploy:
