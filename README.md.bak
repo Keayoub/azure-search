@@ -69,7 +69,7 @@ However, you can try the [Azure pricing calculator](https://azure.com/e/8ffbe5b1
 
 To reduce costs, you can switch to free SKUs for Azure App Service and Form Recognizer by changing the parameters file under the `infra` folder. There are some limits to consider; for example, the free Form Recognizer resource only analyzes the first 2 pages of each document. You can also reduce costs associated with the Form Recognizer by reducing the number of documents in the `data` folder, or by removing the postprovision hook in `azure.yaml` that runs the `prepdocs.py` script.
 
-⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
+?? To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
 ### Project setup
@@ -117,6 +117,7 @@ Execute the following command, if you don't have any pre-existing Azure services
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
+
 It will look like the following:
 
 !['Output from running azd up'](assets/endpoint.png)
@@ -330,9 +331,9 @@ Feature comparison:
 | Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
 | --- | --- | --- |
 | RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
-| Vector support | ✅ Yes | ✅ Yes |
-| Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
-| Persistent chat history | ❌ No (browser tab only) | ✅ Yes, in CosmosDB |
+| Vector support | ? Yes | ? Yes |
+| Data ingestion | ? Yes (PDF) | ? Yes (PDF, TXT, MD, HTML) |
+| Persistent chat history | ? No (browser tab only) | ? Yes, in CosmosDB |
 
 Technology comparison:
 
